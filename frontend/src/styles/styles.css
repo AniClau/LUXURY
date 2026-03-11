@@ -1,0 +1,60 @@
+body {
+    font-family: Arial;
+    margin: 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: black;
+    color: white;
+}
+
+.menu a {
+    margin: 0 10px;
+    color: white;
+    text-decoration: none;
+}
+
+.hero {
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url("https://picsum.photos/1600/900") center/cover;
+    color: white;
+    text-align: center;
+}
+
+.section {
+    padding: 80px;
+    text-align: center;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.btn {
+    background: #d4af37;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.footer {
+    background: black;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}

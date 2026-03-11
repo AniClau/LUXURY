@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+@theme {
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia;
+
+  /* Magazine Contrast Palette */
+  --color-primary-50: #ffffff;
+  --color-primary-100: #f8f8f8;
+  --color-primary-200: #eeeeee;
+  --color-primary-300: #dddddd;
+  --color-primary-400: #999999;
+  --color-primary-500: #666666;
+  --color-primary-600: #444444;
+  --color-primary-700: #222222;
+  --color-primary-800: #111111;
+  --color-primary-900: #000000;
+  --color-primary-950: #000000;
+
+  --color-accent: #000000;
+  /* Luxury magazine accent is often deep black */
+  --color-gold: #c5a059;
+
+  --shadow-luxury: 0 10px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-white text-primary-800 antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif font-medium text-primary-900 tracking-tight;
+  }
+}
+
+@layer components {
+  .glass-nav {
+    @apply bg-black text-white py-4 transition-all duration-500 shadow-2xl;
+  }
+
+  .btn-luxury {
+    @apply px-10 py-4 bg-black text-white text-xs uppercase tracking-[0.3em] font-medium transition-all duration-300 hover:bg-primary-800 hover:-translate-y-0.5 shadow-lg flex items-center justify-center gap-3 cursor-pointer;
+  }
+
+  /* Sharp magazine cards */
+  .card-luxury {
+    @apply bg-white border border-primary-100 rounded-none p-0 transition-all duration-500 hover:shadow-luxury;
+  }
+
+  .magazine-title {
+    @apply font-serif text-3xl uppercase tracking-[0.2em] leading-tight;
+  }
+
+  .zoom-image-container {
+    @apply overflow-hidden;
+  }
+
+  .zoom-image-container img {
+    @apply transition-transform duration-700 ease-out;
+  }
+
+  .zoom-image-container:hover img {
+    @apply scale-110;
+  }
+}
