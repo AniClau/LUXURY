@@ -94,13 +94,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sirlux_db',
+        'NAME': 'sirlux',
         'USER': 'postgres',
-        'PASSWORD': '1234',
+        'PASSWORD': 'silvestre',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 }
+
 
 AUTH_USER_MODEL = 'sirlux.Usuario'
 
