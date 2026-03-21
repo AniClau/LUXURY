@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
 import { paqueteService, reservacionService, servicioService, menuService, configuracionService } from '../services/api';
-import { Calendar, Users, Info, Star, Shield, ArrowRight, Clock, MapPin, Phone, Utensils, AlertCircle, X } from 'lucide-react';
+import { Calendar, Users, Info, Star, Shield, ArrowRight, Clock, MapPin, Phone, Utensils, AlertCircle, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Reservar = () => {
@@ -16,6 +16,8 @@ const Reservar = () => {
     const [platillos, setPlatillos] = useState([]);
     const [config, setConfig] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [isBarFixed, setIsBarFixed] = useState(false);
+    const [activeCatIndex, setActiveCatIndex] = useState(0);
     const [errorMsg, setErrorMsg] = useState('');
 
     const notify = (msg) => {
@@ -386,41 +388,70 @@ const Reservar = () => {
                                 </div>
                             </section>
 
-                             {/* 3. Selección de Menú */}
+                            {/* 3. Selección de Menú */}
                             {selectedPkg && selectedPkg.incluye_menu && (
                                 <section id="step3" className="space-y-16">
                                     <div className="flex flex-col items-center text-center gap-4">
                                         <span className="w-12 h-12 rounded-full border border-black flex items-center justify-center text-[10px] font-black">03</span>
                                         <h3 className="font-serif text-4xl uppercase tracking-tight">Curaduría Gourmet</h3>
                                     </div>
-                                    <div className="space-y-16">
-                                        {categorias.map(cat => (
-                                            <div key={cat.id}>
-                                                <h4 className="flex items-center gap-6 mb-10">
-                                                    <div className="h-[1px] bg-gray-100 flex-1"></div>
-                                                    <span className="text-[10px] uppercase tracking-[0.5em] font-black text-gray-400">{cat.nombre}</span>
-                                                    <div className="h-[1px] bg-gray-100 flex-1"></div>
-                                                </h4>
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                                    {platillos.filter(p => p.categoria === cat.id).map(p => {
-                                                        const isSelected = formData.platillos_seleccionados.includes(p.id);
-                                                        return (
-                                                            <div 
-                                                                key={p.id} 
-                                                                onClick={() => handlePlatilloToggle(p.id)}
-                                                                className={`cursor-pointer transition-all p-4 rounded-2xl border-2 flex items-center gap-4 ${isSelected ? 'border-black bg-white shadow-xl px-6 scale-[1.02]' : 'border-white bg-white hover:border-gray-100'}`}
-                                                            >
-                                                                <div className={`w-14 h-14 rounded-full overflow-hidden border ${isSelected ? 'border-black' : 'border-gray-50'}`}>
-                                                                    {p.imagen && <img src={p.imagen} alt={p.nombre} className="w-full h-full object-cover" />}
-                                                                </div>
-                                                                <span className={`text-xs font-bold uppercase tracking-widest ${isSelected ? 'text-black' : 'text-gray-500'}`}>{p.nombre}</span>
-                                                            </div>
-                                                        );
-                                                    })}
-                                                </div>
-                                            </div>
-                                        ))}
+
+                                    {/* Category Navigator for Menu Selection */}
+                                    <div className="bg-white p-6 rounded-full border border-gray-100 shadow-sm flex items-center justify-between mb-12">
+                                        <button 
+                                            type="button"
+                                            onClick={() => setActiveCatIndex(Math.max(0, activeCatIndex - 1))}
+                                            disabled={activeCatIndex === 0}
+                                            className={`flex items-center gap-2 p-2 px-6 rounded-full transition-all text-[10px] font-black uppercase tracking-widest ${activeCatIndex === 0 ? 'opacity-20 grayscale' : 'hover:bg-gray-50 text-black'}`}
+                                        >
+                                            <ChevronLeft size={16} /> Anterior
+                                        </button>
+
+                                        <div className="flex flex-col items-center">
+                                            <span className="text-[9px] uppercase tracking-[0.4em] text-gray-400 font-bold mb-1">Categoría {activeCatIndex + 1} de {categorias.length}</span>
+                                            <h4 className="font-serif text-2xl italic text-black">{categorias[activeCatIndex]?.nombre}</h4>
+                                        </div>
+
+                                        <button 
+                                            type="button"
+                                            onClick={() => setActiveCatIndex(Math.min(categorias.length - 1, activeCatIndex + 1))}
+                                            disabled={activeCatIndex === categorias.length - 1}
+                                            className={`flex items-center gap-2 p-2 px-6 rounded-full transition-all text-[10px] font-black uppercase tracking-widest ${activeCatIndex === categorias.length - 1 ? 'opacity-20 grayscale' : 'hover:bg-gray-50 text-black'}`}
+                                        >
+                                            Siguiente <ChevronRight size={16} />
+                                        </button>
                                     </div>
+
+                                    <AnimatePresence mode="wait">
+                                        <motion.div 
+                                            key={activeCatIndex}
+                                            initial={{ opacity: 0, x: 20 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            exit={{ opacity: 0, x: -20 }}
+                                            transition={{ duration: 0.3 }}
+                                            className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+                                        >
+                                            {platillos.filter(p => p.categoria === categorias[activeCatIndex]?.id).map(p => {
+                                                const isSelected = formData.platillos_seleccionados.includes(p.id);
+                                                return (
+                                                    <motion.div 
+                                                        key={p.id} 
+                                                        whileTap={{ scale: 0.98 }}
+                                                        onClick={() => handlePlatilloToggle(p.id)}
+                                                        className={`cursor-pointer transition-all p-6 rounded-[32px] border-2 flex items-center gap-6 ${isSelected ? 'border-black bg-white shadow-xl scale-[1.02]' : 'border-white bg-white hover:border-gray-100'}`}
+                                                    >
+                                                        <div className={`w-16 h-16 rounded-full overflow-hidden border-2 shadow-inner ${isSelected ? 'border-black' : 'border-gray-50'}`}>
+                                                            {p.imagen && <img src={p.imagen} alt={p.nombre} className="w-full h-full object-cover" />}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <p className={`text-[11px] font-black uppercase tracking-widest leading-tight ${isSelected ? 'text-black' : 'text-gray-500'}`}>{p.nombre}</p>
+                                                            {isSelected && <p className="text-[10px] text-gray-400 mt-1 font-serif italic">Seleccionado</p>}
+                                                        </div>
+                                                    </motion.div>
+                                                );
+                                            })}
+                                        </motion.div>
+                                    </AnimatePresence>
                                 </section>
                             )}
 

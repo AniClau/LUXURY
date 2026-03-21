@@ -13,6 +13,8 @@ class Menu(models.Model):
 
 class CategoriaMenu(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
+    descripcion = models.TextField(blank=True, null=True)
+    imagen = models.ImageField(upload_to='menus/categorias/', blank=True, null=True)
     estado = models.BooleanField(default=True)
 
     def __str__(self):

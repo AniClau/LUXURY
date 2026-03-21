@@ -13,7 +13,16 @@ const Paquetes = () => {
     const [loading, setLoading] = useState(true);
     const [selectedPack, setSelectedPack] = useState(null);
     const [filter, setFilter] = useState('Todos');
+    const [isBarFixed, setIsBarFixed] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsBarFixed(window.scrollY > 480);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     useEffect(() => {
         const fetchContent = async () => {
@@ -86,48 +95,54 @@ const Paquetes = () => {
         : catalogData.filter(p => (p.category || "").includes(filter) || (p.title || "").includes(filter));
 
     return (
-        <PageTransition>
-            <div className="bg-white min-h-screen">
-                <Navbar />
+        <div className="bg-white min-h-screen">
+            <Navbar />
 
-                {/* Hero Section */}
-                <section className="pt-48 pb-32 px-10 bg-white">
-                    <div className="max-w-[1600px] mx-auto text-center">
-                        <motion.span
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            className="text-primary-400 text-[11px] uppercase tracking-[0.6em] font-bold inline-block mb-10"
-                        >
-                            Catálogo 2024 / LUXURY
-                        </motion.span>
-                        <h1 className="text-7xl md:text-9xl mb-12 font-serif uppercase tracking-tight leading-none text-black">
-                            Colección <span className="italic font-light">Exclusiva</span>
-                        </h1>
-                        <p className="text-primary-500 text-xl max-w-4xl mx-auto font-light leading-relaxed mb-10">
-                            Una curaduría meticulosa de experiencias diseñadas para redefinir el estándar de la elegancia.
-                            Cada paquete es una declaración de estilo y sofisticación minimalista.
-                        </p>
-                    </div>
-                </section>
 
-                {/* Filter section */}
-                <div className="sticky top-24 z-40 bg-white/90 backdrop-blur-md border-y border-primary-100 py-8 mb-24">
-                    <div className="max-w-[1600px] mx-auto flex justify-center gap-16 px-10 overflow-x-auto whitespace-nowrap scrollbar-hide">
-                        {['Todos', 'Básicos', 'Banquetes'].map((cat) => (
-                            <button
-                                key={cat}
-                                onClick={() => setFilter(cat)}
-                                className={`text-[11px] uppercase tracking-[0.4em] font-bold transition-all relative py-2 ${filter === cat ? 'text-black' : 'text-primary-400 hover:text-black'
-                                    }`}
-                            >
-                                {cat}
-                                {filter === cat && (
-                                    <motion.div layoutId="activeFilter" className="absolute -bottom-1 left-0 right-0 h-[2px] bg-black" />
-                                )}
-                            </button>
-                        ))}
-                    </div>
+            {/* Hero Section */}
+            <section className="pt-48 pb-32 px-10 bg-white">
+                <div className="max-w-[1600px] mx-auto text-center">
+                    <motion.span
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-primary-400 text-[11px] uppercase tracking-[0.6em] font-bold inline-block mb-10"
+                    >
+                        Catálogo 2024 / LUXURY
+                    </motion.span>
+                    <h1 className="text-7xl md:text-9xl mb-12 font-serif uppercase tracking-tight leading-none text-black">
+                        Colección <span className="italic font-light">Exclusiva</span>
+                    </h1>
+                    <p className="text-primary-500 text-xl max-w-4xl mx-auto font-light leading-relaxed mb-10">
+                        Una curaduría meticulosa de experiencias diseñadas para redefinir el estándar de la elegancia.
+                        Cada paquete es una declaración de estilo y sofisticación minimalista.
+                    </p>
                 </div>
+            </section>
+
+            {/* Filter section */}
+            <div 
+                className={`${isBarFixed ? 'fixed top-[72px] left-0 right-0 z-[100] shadow-xl border-b' : 'relative border-y'} bg-white/95 backdrop-blur-md border-primary-100 py-8 transition-all duration-300`}
+            >
+                <div className="max-w-[1600px] mx-auto flex justify-center gap-16 px-10 overflow-x-auto whitespace-nowrap scrollbar-hide">
+                    {['Todos', 'Básicos', 'Banquetes'].map((cat) => (
+                        <button
+                            key={cat}
+                            onClick={() => setFilter(cat)}
+                            className={`text-[11px] uppercase tracking-[0.4em] font-bold transition-all relative py-2 ${filter === cat ? 'text-black' : 'text-primary-400 hover:text-black'
+                                }`}
+                        >
+                            {cat}
+                            {filter === cat && (
+                                <motion.div layoutId="activeFilter" className="absolute -bottom-1 left-0 right-0 h-[2px] bg-black" />
+                            )}
+                        </button>
+                    ))}
+                </div>
+            </div>
+            {isBarFixed && <div className="h-[90px]" />}
+
+
+            <PageTransition>
 
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-40">
@@ -372,9 +387,10 @@ const Paquetes = () => {
                     )}
                 </AnimatePresence>
 
-                <Footer />
-            </div>
-        </PageTransition>
+            </PageTransition>
+
+            <Footer />
+        </div>
     );
 };
 
